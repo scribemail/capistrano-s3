@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2.0.0
+
+Major change : AWS SDK dependency was upgragred to 2.6, see migration guide at bottom of README to upgrade from v1.
+Feature : Add wait_for_invalidation task (#32) @exoszajzbuk
+Improvement : Simpler way to set deployment_path (#33) @j15e
+
 ## v1.2.0
 
 Feature : Add exclusions (#30) @exoszajzbuk
