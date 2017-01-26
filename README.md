@@ -171,6 +171,25 @@ See our boilerplate
 [sinatra-static-bp](https://github.com/hooktstudios/sinatra-static-bp)
 for an example of the complete setup.
 
+## Migration guide
+
+### From `< 2.0.0`
+
+If you have customized `deployment_path` from 2.0 use a simplified format
+
+```diff
+# config/deploy.rb
+-set :deployment_path, proc { Dir.pwd.gsub('\n', '') + '/build' }
++set :deployment_path, 'build'
+```
+
+If you have configured `s3_endpoint` to something other than the default switch to new syntax using [region](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region) identifiers
+
+```diff
+-set :s3_endpoint, 's3-eu-west-1.amazonaws.com'
++set :region, 'eu-west-1'
+```
+
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/hooktstudios/capistrano-s3/blob/master/CONTRIBUTING.md) for more details on contributing and running test.
