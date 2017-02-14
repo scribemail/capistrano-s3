@@ -3,7 +3,8 @@ module Capistrano
     module Defaults
       DEFAULTS = {
         :deployment_path      => "public",
-        :bucket_write_options => { :acl => :public_read },
+        :target_path          => "",
+        :bucket_write_options => { :acl => 'public-read' },
         :region               => 'us-east-1',
         :redirect_options     => {},
         :only_gzip            => false,

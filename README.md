@@ -87,9 +87,25 @@ with:
 set :region, 'eu-west-1'
 ```
 
+### Deployment path
+
+You can set `deployment_path` to select the **local** path to deploy relative to the project root. Do not use trailing slash. Default value is: `public`.
+
+```ruby
+set :deployment_path, 'dist'
+```
+
+### Target path
+
+You can also set a **remote** path relative to the bucket root using `target_path`. Do not use trailing slash. Default value is empty (bucket root).
+
+```ruby
+set :target_path, 'app'
+```
+
 ### Write options
 
-capistrano-s3 sets files `:content_type` and `:acl` to `:public_read`, add or override with:
+capistrano-s3 sets files `:content_type` and `:acl` to `public-read`, add or override with:
 
 ```ruby
 set :bucket_write_options, {
@@ -110,6 +126,8 @@ set :redirect_options, {
   'another.html' => '/test.html',
 }
 ```
+
+The `redirect_options` parameter takes `target_path` into account, you can use the same paths regardless of its value.
 
 Valid redirect destination should either start with `http` or `https` scheme,
 or begin with leading slash `/`.
@@ -137,6 +155,14 @@ If you set a CloudFront distribution ID (not the URL!) and an array of paths, ca
 ```ruby
 set :distribution_id, "CHANGETHIS"
 set :invalidations, [ "/index.html", "/assets/*" ]
+```
+
+The CloudFront invalidation feature takes `target_path` into account. Write your invalidations relatively to your `target_path`. For example to invalidate everything inside the remote `app` folder:
+
+```ruby
+set :target_path, "app"
+set :distribution_id, "CHANGETHIS"
+set :invalidations, [ "/*" ]
 ```
 
 If you want to wait until the invalidation batch is completed (e.g. on a CI server), you can run `cap <stage> deploy:s3:wait_for_invalidation`. The command will wait indefinitely until the invalidation is completed.
