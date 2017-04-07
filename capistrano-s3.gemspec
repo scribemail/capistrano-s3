@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   # Gem dependencies
   s.add_runtime_dependency 'aws-sdk',    '~> 2.6'
   s.add_runtime_dependency 'capistrano', '>= 2'
-  s.add_runtime_dependency 'mime-types', '~> 1.23'
+  s.add_runtime_dependency 'mime-types'
   s.add_runtime_dependency 'net-ssh',    '~> 2.9'
 
   # Development dependencies
