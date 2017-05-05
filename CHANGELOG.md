@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.1.1
+
+Update : removed locked & old net-ssh dependency for Ruby 1.9
+
 ## v2.1.0
 
 Feature : Add option to specify target_path (#35)
