@@ -8,7 +8,7 @@ module Capistrano
       LAST_PUBLISHED_FILE = '.last_published'
       LAST_INVALIDATION_FILE = '.last_invalidation'
 
-      def self.publish!(region, key, secret, bucket, deployment_path, distribution_id, invalidations, exclusions, only_gzip, extra_options)
+      def self.publish!(region, key, secret, bucket, deployment_path, target_path, distribution_id, invalidations, exclusions, only_gzip, extra_options)
         deployment_path_absolute = File.expand_path(deployment_path, Dir.pwd)
         s3 = self.establish_s3_client_connection!(region, key, secret)
         updated = false
@@ -21,7 +21,7 @@ module Capistrano
             path = self.base_file_path(deployment_path_absolute, file)
             path.gsub!(/^\//, "") # Remove preceding slash for S3
 
-            self.put_object(s3, bucket, path, file, only_gzip, extra_options)
+            self.put_object(s3, bucket, target_path, path, file, only_gzip, extra_options)
           end
         end
 
@@ -34,7 +34,7 @@ module Capistrano
             :invalidation_batch => {
               :paths => {
                 :quantity => invalidations.count,
-                :items => invalidations
+                :items => invalidations.map { |path| File.join('/', target_path, path) }
               },
               :caller_reference => SecureRandom.hex
             }
@@ -105,14 +105,14 @@ module Capistrano
           File.mtime(file) < File.mtime(LAST_PUBLISHED_FILE)
         end
 
-        def self.put_object(s3, bucket, path, file, only_gzip, extra_options)
+        def self.put_object(s3, bucket, target_path, path, file, only_gzip, extra_options)
           base_name = File.basename(file)
           mime_type = mime_type_for_file(base_name)
           options   = {
             :bucket => bucket,
-            :key    => path,
+            :key    => File.join(target_path, path),
             :body   => open(file),
-            :acl    => :public_read,
+            :acl    => 'public-read',
           }
 
           options.merge!(build_redirect_hash(path, extra_options[:redirect]))
@@ -126,7 +126,7 @@ module Capistrano
               options.merge!(build_gzip_content_type_hash(file, mime_type))
 
               # upload as original file name
-              options.merge!(key: self.orig_name(path)) if only_gzip
+              options.merge!(key: File.join(target_path, self.orig_name(path))) if only_gzip
             end
           end
 
