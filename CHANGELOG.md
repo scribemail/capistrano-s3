@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v2.1.0
+
+Feature : Add option to specify target_path (#35)
+Change : Relax mime-types version requirement (#36)
+
 ## v2.0.0
 
 Major change : AWS SDK dependency was upgragred to 2.6, see migration guide at bottom of README to upgrade from v1.
