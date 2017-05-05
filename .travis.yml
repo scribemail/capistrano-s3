@@ -8,10 +8,10 @@ bundler_args: --without debug release
 before_install:
   - ruby -v | (grep -v "rubinius" && gem install bundler) || echo 0
 rvm:
-  - 2.2.6
-  - 2.3.3
-  - 2.4.0
-  - rbx-3.69
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+  - rbx-3.75
   - jruby-9.1.5.0
   - jruby-head
   - ruby-head
