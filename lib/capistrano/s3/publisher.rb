@@ -52,7 +52,7 @@ module Capistrano
         s3 = self.establish_s3_connection!(region, key, secret)
         s3.buckets[bucket].clear!
 
-        FileUtils.rm(LAST_PUBLISHED_FILE)
+        self.clear_published!(bucket, stage)
         FileUtils.rm(LAST_INVALIDATION_FILE)
       end
 
@@ -111,6 +111,12 @@ module Capistrano
         def self.published_to!(bucket, stage)
           current_publish = self.last_published
           current_publish["#{bucket}::#{stage}"] = Time.now.iso8601
+          File.write(LAST_PUBLISHED_FILE, current_publish.to_yaml)
+        end
+
+        def self.clear_published!(bucket, stage)
+          current_publish = self.last_published
+          current_publish["#{bucket}::#{stage}"] = nil
           File.write(LAST_PUBLISHED_FILE, current_publish.to_yaml)
         end
 
