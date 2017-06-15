@@ -8,14 +8,14 @@ module Capistrano
       LAST_PUBLISHED_FILE = '.last_published'
       LAST_INVALIDATION_FILE = '.last_invalidation'
 
-      def self.publish!(region, key, secret, bucket, deployment_path, target_path, distribution_id, invalidations, exclusions, only_gzip, extra_options)
+      def self.publish!(region, key, secret, bucket, deployment_path, target_path, distribution_id, invalidations, exclusions, only_gzip, extra_options, stage = 'default')
         deployment_path_absolute = File.expand_path(deployment_path, Dir.pwd)
         s3 = self.establish_s3_client_connection!(region, key, secret)
         updated = false
 
         self.files(deployment_path_absolute, exclusions).each do |file|
           if !File.directory?(file)
-            next if self.published?(file)
+            next if self.published?(file, bucket, stage)
             next if only_gzip && self.has_gzipped_version?(file)
 
             path = self.base_file_path(deployment_path_absolute, file)
@@ -47,18 +47,18 @@ module Capistrano
           end
         end
 
-        FileUtils.touch(LAST_PUBLISHED_FILE)
+        self.published_to!(bucket, stage)
       end
 
-      def self.clear!(region, key, secret, bucket)
+      def self.clear!(region, key, secret, bucket, stage = 'default')
         s3 = self.establish_s3_connection!(region, key, secret)
         s3.buckets[bucket].clear!
 
-        FileUtils.rm(LAST_PUBLISHED_FILE)
+        self.clear_published!(bucket, stage)
         FileUtils.rm(LAST_INVALIDATION_FILE)
       end
 
-      def self.check_invalidation(region, key, secret, distribution_id)
+      def self.check_invalidation(region, key, secret, distribution_id, stage = 'default')
         last_invalidation_id = File.read(LAST_INVALIDATION_FILE).strip
 
         cf = self.establish_cf_client_connection!(region, key, secret)
@@ -102,9 +102,29 @@ module Capistrano
           Dir.glob("#{deployment_path}/**/*") - Dir.glob(exclusions.map { |e| "#{deployment_path}/#{e}" })
         end
 
-        def self.published?(file)
-          return false unless File.exists? LAST_PUBLISHED_FILE
-          File.mtime(file) < File.mtime(LAST_PUBLISHED_FILE)
+        def self.last_published
+          if File.exists? LAST_PUBLISHED_FILE
+            YAML.load_file(LAST_PUBLISHED_FILE) || {}
+          else
+            {}
+          end
+        end
+
+        def self.published_to!(bucket, stage)
+          current_publish = self.last_published
+          current_publish["#{bucket}::#{stage}"] = Time.now.iso8601
+          File.write(LAST_PUBLISHED_FILE, current_publish.to_yaml)
+        end
+
+        def self.clear_published!(bucket, stage)
+          current_publish = self.last_published
+          current_publish["#{bucket}::#{stage}"] = nil
+          File.write(LAST_PUBLISHED_FILE, current_publish.to_yaml)
+        end
+
+        def self.published?(file, bucket, stage)
+          return false unless last_publish_time = self.last_published["#{bucket}::#{stage}"]
+          File.mtime(file) < Time.parse(last_publish_time)
         end
 
         def self.put_object(s3, bucket, target_path, path, file, only_gzip, extra_options)
