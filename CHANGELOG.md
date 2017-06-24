@@ -11,7 +11,7 @@ Change : Relax mime-types version requirement (#36)
 
 ## v2.0.0
 
-Major change : AWS SDK dependency was upgragred to 2.6, see migration guide at bottom of README to upgrade from v1.
+Major change : AWS SDK dependency was upgraded to 2.6, see migration guide at bottom of README to upgrade from v1.
 Feature : Add wait_for_invalidation task (#32) @exoszajzbuk
 Improvement : Simpler way to set deployment_path (#33) @j15e
 
