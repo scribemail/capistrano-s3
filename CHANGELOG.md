@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v2.2.0
+
+Feature : Allow to deploy to multiple stages and buckets (#41)
+Fix : issue with new target_path feature (#40)
+
 ## v2.1.1
 
 Update : removed locked & old net-ssh dependency for Ruby 1.9
