@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.email         = ['jeanphilippe.doyle@hooktstudios.com', 'aleksandrs@ledovskis.lv']
   s.description   = 'Enables static websites deployment to Amazon S3 website buckets using Capistrano.'
   s.summary       = 'Build and deploy a static website to Amazon S3'
-  s.homepage      = 'http://github.com/hooktstudios/capistrano-s3'
+  s.homepage      = 'https://github.com/capistrano-s3/capistrano-s3'
   s.licenses      = ['MIT']
   s.files         = `git ls-files`.split($\)
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

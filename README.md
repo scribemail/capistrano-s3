@@ -2,9 +2,8 @@
 
 > Enables static websites deployment to Amazon S3 website buckets using Capistrano.
 
-[![Build Status](https://img.shields.io/travis/hooktstudios/capistrano-s3/master.svg)](https://travis-ci.org/hooktstudios/capistrano-s3)
-[![Dependency Status](https://img.shields.io/gemnasium/hooktstudios/capistrano-s3.svg)](https://gemnasium.com/hooktstudios/capistrano-s3)
-[![Code Climate](https://img.shields.io/codeclimate/github/hooktstudios/capistrano-s3.svg)](https://codeclimate.com/github/hooktstudios/capistrano-s3)
+[![Build Status](https://travis-ci.org/capistrano-s3/capistrano-s3.svg?branch=master)](https://travis-ci.org/capistrano-s3/capistrano-s3)
+[![Maintainability](https://api.codeclimate.com/v1/badges/b0e4fbd956233a7849ba/maintainability)](https://codeclimate.com/github/capistrano-s3/capistrano-s3/maintainability)
 [![Gem Version](https://img.shields.io/gem/v/capistrano-s3.svg)](https://rubygems.org/gems/capistrano-s3)
 
 ## Hosting your website with Amazon S3
@@ -218,7 +217,7 @@ If you have configured `s3_endpoint` to something other than the default switch 
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/hooktstudios/capistrano-s3/blob/master/CONTRIBUTING.md) for more details on contributing and running test.
+See [CONTRIBUTING.md](https://github.com/capistrano-s3/capistrano-s3/blob/master/CONTRIBUTING.md) for more details on contributing and running test.
 
 ## Credits
 
@@ -226,4 +225,4 @@ See [CONTRIBUTING.md](https://github.com/hooktstudios/capistrano-s3/blob/master/
 
 [capistrano-s3](https://rubygems.org/gems/capistrano-s3) is maintained and funded by [hooktstudios](http://github.com/hooktstudios)
 
-Thanks & credits also to all other [contributors](https://github.com/hooktstudios/capistrano-s3/contributors).
+Thanks & credits also to all other [contributors](https://github.com/capistrano-s3/capistrano-s3/contributors).
