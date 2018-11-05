@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2.3.0
+
+Change : Dotfiles are not ignored anymore (#48)
+
 ## v2.2.0
 
 Feature : Allow to deploy to multiple stages and buckets (#41)
