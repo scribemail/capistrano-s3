@@ -99,7 +99,16 @@ module Capistrano
         end
 
         def self.files(deployment_path, exclusions)
-          Dir.glob("#{deployment_path}/**/*") - Dir.glob(exclusions.map { |e| "#{deployment_path}/#{e}" })
+          globbed_paths = Dir.glob(
+            File.join(deployment_path, '**', '*'),
+            File::FNM_DOTMATCH # Else Unix-like hidden files will be ignored
+          )
+
+          excluded_paths = Dir.glob(
+            exclusions.map { |e| File.join(deployment_path, e) }
+          )
+
+          globbed_paths - excluded_paths
         end
 
         def self.last_published

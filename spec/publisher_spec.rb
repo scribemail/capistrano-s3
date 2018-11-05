@@ -7,6 +7,21 @@ describe Capistrano::S3::Publisher do
     FileUtils.rm(publish_file) if File.exist?(publish_file)
   end
 
+  describe "::files" do
+    subject(:files) { described_class.files(deployment_path, exclusions) }
+
+    let(:deployment_path) { "spec/sample-2" }
+    let(:exclusions) { [] }
+
+    it "includes dot-prefixed/hidden directories" do
+      expect(files).to include("spec/sample-2/.well-known/test.txt")
+    end
+
+    it "includes dot-prefixed/hidden files" do
+      expect(files).to include("spec/sample-2/public/.htaccess")
+    end
+  end
+
   context "on publish!" do
     it "publish all files" do
       Aws::S3::Client.any_instance.expects(:put_object).times(8)
