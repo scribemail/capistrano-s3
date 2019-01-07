@@ -1,8 +1,10 @@
-require 'spec_helper'
+# frozen_string_literal: true
+
+require "spec_helper"
 
 describe Capistrano::S3::Publisher do
   before do
-    @root = File.expand_path('../', __FILE__)
+    @root = File.expand_path(__dir__)
     publish_file = Capistrano::S3::Publisher::LAST_PUBLISHED_FILE
     FileUtils.rm(publish_file) if File.exist?(publish_file)
   end
@@ -25,12 +27,12 @@ describe Capistrano::S3::Publisher do
   context "on publish!" do
     it "publish all files" do
       Aws::S3::Client.any_instance.expects(:put_object).times(8)
-      Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], [], false, {}, 'staging')
+      described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], [], false, {}, "staging")
     end
 
     it "publish only gzip files when option is enabled" do
       Aws::S3::Client.any_instance.expects(:put_object).times(4)
-      Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], [], true, {}, 'staging')
+      described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], [], true, {}, "staging")
     end
 
     context "invalidations" do
@@ -38,14 +40,14 @@ describe Capistrano::S3::Publisher do
         Aws::S3::Client.any_instance.expects(:put_object).times(8)
         Aws::CloudFront::Client.any_instance.expects(:create_invalidation).once
 
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', ['*'], [], false, {}, 'staging')
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", ["*"], [], false, {}, "staging")
       end
 
       it "publish all files without invalidations" do
         Aws::S3::Client.any_instance.expects(:put_object).times(8)
         Aws::CloudFront::Client.any_instance.expects(:create_invalidation).never
 
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], [], false, {}, 'staging')
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], [], false, {}, "staging")
       end
     end
 
@@ -53,100 +55,100 @@ describe Capistrano::S3::Publisher do
       it "exclude one files" do
         Aws::S3::Client.any_instance.expects(:put_object).times(7)
 
-        exclude_paths = ['fonts/cantarell-regular-webfont.svg']
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], exclude_paths, false, {}, 'staging')
+        exclude_paths = ["fonts/cantarell-regular-webfont.svg"]
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], exclude_paths, false, {}, "staging")
       end
 
       it "exclude multiple files" do
         Aws::S3::Client.any_instance.expects(:put_object).times(6)
 
-        exclude_paths = ['fonts/cantarell-regular-webfont.svg', 'fonts/cantarell-regular-webfont.svg.gz']
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], exclude_paths, false, {}, 'staging')
+        exclude_paths = ["fonts/cantarell-regular-webfont.svg", "fonts/cantarell-regular-webfont.svg.gz"]
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], exclude_paths, false, {}, "staging")
       end
 
       it "exclude directory" do
         Aws::S3::Client.any_instance.expects(:put_object).times(0)
 
-        exclude_paths = ['fonts/**/*']
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample', '', 'cf123', [], exclude_paths, false, {}, 'staging')
+        exclude_paths = ["fonts/**/*"]
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample", "", "cf123", [], exclude_paths, false, {}, "staging")
       end
     end
 
     context "write options" do
       it "sets bucket write options to all files" do
-        headers = { cache_control: 'no-cache' }
+        headers = { cache_control: "no-cache" }
         extra_options = { write: headers }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with() { |options| contains(options, headers) }.times(3)
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| contains(options, headers) }.times(3)
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-write", "", "cf123", [], [], false, extra_options, "staging")
       end
 
       it "sets object write options to a single file" do
-        headers = { cache_control: 'no-cache', acl: :private }
+        headers = { cache_control: "no-cache", acl: :private }
         extra_options = {
           object_write: {
-            'index.html' => headers
+            "index.html" => headers
           }
         }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'index.html' && contains(options, headers) }.once
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != 'index.html' && !contains(options, headers) }.twice
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "index.html" && contains(options, headers) }.once
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != "index.html" && !contains(options, headers) }.twice
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-write", "", "cf123", [], [], false, extra_options, "staging")
       end
 
       it "sets object write options to a directory" do
-        asset_headers = { cache_control: 'max-age=3600' }
-        index_headers = { cache_control: 'no-cache' }
+        asset_headers = { cache_control: "max-age=3600" }
+        index_headers = { cache_control: "no-cache" }
         extra_options = {
           object_write: {
-            'assets/**' => asset_headers,
-            'index.html' => index_headers
+            "assets/**" => asset_headers,
+            "index.html" => index_headers
           }
         }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'index.html' && !contains(options, asset_headers) && contains(options, index_headers) }.once
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != 'index.html' && !contains(options, index_headers) && contains(options, asset_headers) }.twice
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "index.html" && !contains(options, asset_headers) && contains(options, index_headers) }.once
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != "index.html" && !contains(options, index_headers) && contains(options, asset_headers) }.twice
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-write", "", "cf123", [], [], false, extra_options, "staging")
       end
 
       it "sets object write permissions in the order of definition" do
-        asset_headers = { cache_control: 'max-age=3600' }
-        js_headers = { cache_control: 'no-cache' }
-        extra_options = { object_write: { 'assets/**' => asset_headers, 'assets/script.js' => js_headers } }
+        asset_headers = { cache_control: "max-age=3600" }
+        js_headers = { cache_control: "no-cache" }
+        extra_options = { object_write: { "assets/**" => asset_headers, "assets/script.js" => js_headers } }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'assets/script.js' && !contains(options, asset_headers) && contains(options, js_headers) }.once
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'assets/style.css' && !contains(options, js_headers) && contains(options, asset_headers) }.once
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'index.html' && !contains(options, js_headers) && !contains(options, asset_headers) }.once
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "assets/script.js" && !contains(options, asset_headers) && contains(options, js_headers) }.once
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "assets/style.css" && !contains(options, js_headers) && contains(options, asset_headers) }.once
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "index.html" && !contains(options, js_headers) && !contains(options, asset_headers) }.once
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-write", "", "cf123", [], [], false, extra_options, "staging")
       end
 
       it "overwrites object write permissions with wrong ordering" do
-        js_headers = { cache_control: 'no-cache' }
-        asset_headers = { cache_control: 'max-age=3600' }
+        js_headers = { cache_control: "no-cache" }
+        asset_headers = { cache_control: "max-age=3600" }
         extra_options = {
           object_write: {
-            'assets/script.js' => js_headers,
-            'assets/**' => asset_headers
+            "assets/script.js" => js_headers,
+            "assets/**" => asset_headers
           }
         }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != 'index.html' && !contains(options, js_headers) && contains(options, asset_headers) }.twice
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == 'index.html' && !contains(options, js_headers) && !contains(options, asset_headers) }.once
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] != "index.html" && !contains(options, js_headers) && contains(options, asset_headers) }.twice
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:key] == "index.html" && !contains(options, js_headers) && !contains(options, asset_headers) }.once
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-write", "", "cf123", [], [], false, extra_options, "staging")
       end
     end
 
     context "MIME types" do
       it "sets best match MIME type by default" do
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == 'application/ecmascript' }.once
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-mime', '', 'cf123', [], [], false, {}, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == "application/ecmascript" }.once
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-mime", "", "cf123", [], [], false, {}, "staging")
       end
 
       it "sets CloudFront preferred MIME type if needed" do
         extra_options = { prefer_cf_mime_types: true }
 
-        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == 'application/javascript' }.once
-        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-mime', '', 'cf123', [], [], false, extra_options, 'staging')
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == "application/javascript" }.once
+        described_class.publish!("s3.amazonaws.com", "abc", "123", "mybucket.amazonaws.com", "spec/sample-mime", "", "cf123", [], [], false, extra_options, "staging")
       end
     end
   end

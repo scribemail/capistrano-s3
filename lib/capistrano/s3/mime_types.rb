@@ -1,11 +1,13 @@
-require 'mime/types'
+# frozen_string_literal: true
+
+require "mime/types"
 
 module Capistrano
   module S3
-    module MIMETypes  
+    module MIMETypes
       # List of supported MIME Types for CloudFront "Serving Compressed Files" feature
       #   - https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html#compressed-content-cloudfront-file-types
-      CF_MIME_TYPES = %w(
+      CF_MIME_TYPES = %w[
         application/eot
         application/font
         application/font-sfnt
@@ -47,7 +49,7 @@ module Capistrano
         text/x-script
         text/x-component
         text/x-java-source
-      ).map { |name| MIME::Types[name].first }.compact
+      ].map { |name| MIME::Types[name].first }.compact
     end
   end
 end
