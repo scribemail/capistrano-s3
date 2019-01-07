@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v2.4.0
+
+Feature : Add option to prefer CloudFront compression supported MIME types (#54) 
+Feature : Add object_write_options to specify headers using patterns (#52)
+
 ## v2.3.0
 
 Change : Dotfiles are not ignored anymore (#48)
