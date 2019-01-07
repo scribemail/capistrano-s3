@@ -209,6 +209,20 @@ You can set a list of files or directories to exclude from upload. The path must
 set :exclusions, [ "index.html", "resources/**/*" ]
 ```
 
+### MIME types
+
+Under the hood capistrano-s3 is using the [mime-types](https://github.com/mime-types/ruby-mime-types) gem to determine the correct MIME type used for `:content_type` based on the filename extension. The possible list of MIME types are in a priority ordered list, and by default capistrano-s3 uses the first element - the "best" match.
+
+However CloudFront has [a list](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html#compressed-content-cloudfront-file-types) of MIME types that are supported by the [Serving Compressed Files](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html) feature, and the two results are not necessarily overlap.
+
+> *For example:* the "best" MIME type match for a `.js` file is `application/ecmascript`, but files with this type are not compressed by CloudFront, only the ones with `application/javascript`.
+
+You can enable to prefer CloudFront-supported MIME types over the "best" ones by setting:
+
+```ruby
+set :prefer_cf_mime_types, true
+```
+
 ## Example of usage
 
 Our Ruby stack for static websites:

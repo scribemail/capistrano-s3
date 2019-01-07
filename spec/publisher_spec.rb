@@ -135,5 +135,19 @@ describe Capistrano::S3::Publisher do
         Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-write', '', 'cf123', [], [], false, extra_options, 'staging')
       end
     end
+
+    context "MIME types" do
+      it "sets best match MIME type by default" do
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == 'application/ecmascript' }.once
+        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-mime', '', 'cf123', [], [], false, {}, 'staging')
+      end
+
+      it "sets CloudFront preferred MIME type if needed" do
+        extra_options = { prefer_cf_mime_types: true }
+
+        Aws::S3::Client.any_instance.expects(:put_object).with { |options| options[:content_type] == 'application/javascript' }.once
+        Capistrano::S3::Publisher.publish!('s3.amazonaws.com', 'abc', '123', 'mybucket.amazonaws.com', 'spec/sample-mime', '', 'cf123', [], [], false, extra_options, 'staging')
+      end
+    end
   end
 end
