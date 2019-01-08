@@ -44,6 +44,9 @@ RSpec/NestedGroups:
   Max: 4
 RSpec/LetSetup:
   Enabled: false
+# @todo switch from mocha mocking to rspec mocks & use doubles
+RSpec/AnyInstance:
+  Enabled: false
 
 Style/GuardClause:
   Enabled: false

@@ -5,7 +5,9 @@ source "https://rubygems.org"
 gemspec
 
 gem "awesome_print"
+gem "byebug"
 gem "gem-release"
+gem "guard-rspec"
 gem "mocha"
 gem "rake"
 gem "rspec"
