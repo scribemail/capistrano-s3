@@ -5,8 +5,6 @@ notifications:
 language: ruby
 dist: trusty
 bundler_args: --without debug release
-before_install:
-  - ruby -v | (grep -v "rubinius" && gem install bundler) || echo 0
 rvm:
   - 2.5.3
   - 2.6.0
