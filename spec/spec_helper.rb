@@ -1,5 +1,7 @@
-require 'capistrano/s3/publisher'
-require 'mocha/api'
+# frozen_string_literal: true
+
+require "capistrano/s3/publisher"
+require "mocha/api"
 
 Aws.config[:stub_responses] = true
 
