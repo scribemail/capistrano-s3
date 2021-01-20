@@ -32,7 +32,8 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 2.5.0"
 
   # Gem dependencies
-  s.add_runtime_dependency "aws-sdk",    "~> 2.6"
+  s.add_runtime_dependency "aws-sdk-s3", "~> 1.87"
+  s.add_runtime_dependency "aws-sdk-cloudfront", "~> 1.47"
   s.add_runtime_dependency "capistrano", ">= 2"
   s.add_runtime_dependency "mime-types"
 end
