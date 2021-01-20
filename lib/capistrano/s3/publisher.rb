@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "aws-sdk"
+require "aws-sdk-s3"
+require "aws-sdk-cloudfront"
 require "mime/types"
 require "fileutils"
 require "capistrano/s3/mime_types"
