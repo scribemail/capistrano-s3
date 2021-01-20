@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
   # Gem dependencies
   s.add_runtime_dependency "aws-sdk-s3", "~> 1.87"
   s.add_runtime_dependency "aws-sdk-cloudfront", "~> 1.47"
+  s.add_runtime_dependency "nokogiri", "1.11.1"
   s.add_runtime_dependency "capistrano", ">= 2"
   s.add_runtime_dependency "mime-types"
 end
